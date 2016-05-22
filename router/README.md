@@ -1,6 +1,7 @@
 #route.js
 前端路由注册/解析器
 
+引用：https://git.oschina.net/diqye/route.js
 [runjs演示](http://sandbox.runjs.cn/show/mg3ch4e4) 
 
 ##开始
