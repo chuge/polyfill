@@ -1,0 +1,12 @@
+!function(root,fn){
+	if (typeof exports === 'object') {
+        // Node.
+        module.exports = fn.call(root);
+    } else if (typeof define === 'function' && define.amd) {
+        // AMD. Register as an anonymous module.
+        define(function(){ return fn.call(root) });
+    } else {
+        // Browser globals (root is window)
+        root.diqye = fn.call(root);
+    }
+}(this,function(){

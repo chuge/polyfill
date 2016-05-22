@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>route-test</title>
+    <!--[if lte IE 7]>
+    <script src='./js/ieadaptor.js'></script>
+    <![endif]-->
+    <style>
+        ul>li{
+            float: left;
+            margin-right: 20px;
+            list-style-type: none;
+        }
+        ul>li>a{
+            text-decoration: none;
+        }
+        p{
+            border: solid red 1px;
+            padding-top:20px;
+            padding-bottom: 20px;
+            padding-left: 20px;
+        }
+    </style>
+</head>
+<body>
+    <ul>
+        <li><a href="javascript:history.go(-1)">后腿</a></li>
+        <li><a href="javascript:history.go(1)">前进</a></li>
+    </ul>
+    <ul>
+        <li><a href="#">#---首页</a></li>
+        <li><a href="#about/444">#about/444---匹配数字</a></li>
+        <li><a href="#test/字符串">#test/字符串--匹配字符串</a></li>
+        <li><a href="#about">#about---普通路由</a></li>
+        <li><a href="#diqye/regtest">正则匹配测试</a></li>
+        <li><a href="#nonono">未知路由</a></li>
+    </ul>
+    <br>
+    <p id="content"></p>
+    
+    <p>ie7及其以下 暂不支持前进后腿</p>
+<!--    <p>oscgit:<a href="https://git.oschina.net/diqye/route.js" target="_blank">https://git.oschina.net/diqye/route.js</a></p>-->
+    <script type="text/javascript" src="./js/route.js"></script>
+    <script type="text/javascript">
+        
+        var use=diqye.app.use;  
+        var route=diqye.routefn();
+        var route1=diqye.routefn();
+        use(route);
+        use(function(req,next){
+            console.log('app use')
+            next();
+        })
+        route1.use(function(req,next){
+            console.log('route1 use '+req.path);
+            next();
+        })
+        route.use(route1)
+        route.use(function(req,next){
+            console.log('route use '+req.path);
+            next();
+        });
+        
+        use('/diqye',function(req,next){
+            htmlfn('diqye<br>'+req.query.a);
+        });
+        var t=true;
+        use('/',function(req,next){
+            if(t){
+                //url跳转
+                req.redirect('diqye',{a:'我是首页redirect过来的',b:'ww'});
+                t=false;
+            }else{
+                /*
+                    内部转发
+                    forword会自动调用next函数
+                    在forword后面调用next函数会无效 但不会报错
+                */
+                req.forword('diqye',{a:'我是首页forword过来的',b:'ww'});
+            }
+        });
+        use('/about',function(req,next){
+            document.getElementById('content').innerHTML="我是关于";
+        })
+        use('/about/:number',function(req,next){
+            document.getElementById('content').innerHTML=req.para;
+        })
+        use('/test/:string',function(req){
+            htmlfn(req.para);
+        });
+        use(/(.*)diqye(.*)/g,function(req,next){
+            htmlfn(req.para[2]);
+        });
+
+
+
+        use(function(req,next){
+            console.log('over');
+            htmlfn("未知的路由");
+        });
+        
+
+
+
+        function htmlfn(html){
+            document.getElementById('content').innerHTML=html;
+        }
+
+        diqye.app.start();
+    </script>
+    
+<!--    <script src='https://git.oschina.net/diqye/route.js/widget_preview'></script>-->
+    
+</body>
+</html>

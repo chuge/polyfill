@@ -1,0 +1,5 @@
+	return {
+        app:app,
+		routefn:routefn
+    }
+});
