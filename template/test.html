@@ -1,0 +1,26 @@
+<html>
+<head>
+<script type="text/javascript" src="./template.js"></script>
+<!-- http://www.liaoxuefeng.com/article/001426512790239f83bfb47b1134b63b09a57548d06e5c5000 -->
+<div id="other">
+</div>
+<script id="tpl" type="text/plain">
+    <p>Today: { date }</p>
+    <a href="/{ user.id|safe }">{ user.company }</a>
+</script>
+<script>
+var tpl = new Template(document.getElementById('tpl').innerHTML);
+var s = tpl.render({
+    date: 20150101,
+    user: {
+        id: 'A-000&001',
+        company: 'AT&T'
+    }
+});
+document.getElementById('other').innerHTML = s;
+</script>
+</head>
+
+
+
+</html>
