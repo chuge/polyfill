@@ -1,12 +1,14 @@
-function Promise(fn) {
-	//State
-	var PENDING = 1,
-		FULFILLED = 2,
-		REJECTED = 3;
+var PENDING = 0;
+var FULFILLED = 1;
+var REJECTED = 2;
 
-	var state = PENDING,
-		value = null,
-		handlers = [];
+function Promise(fn) {
+	// store state which can be PENDING, FULFILLED or REJECTED
+	var state = PENDING;
+	// store value once FULFILLED or REJECTED
+	var value = null;
+	// store sucess & failure handlers
+	var handlers = [];
 
 	function fulfill(result) {
 		state = FULFILLED;
@@ -15,9 +17,9 @@ function Promise(fn) {
 		handlers = null;
 	}
 
-	function reject(reason) {
+	function reject(error) {
 		state = REJECTED;
-		value = reason;
+		value = error;
 		handlers.forEach(handle);
 		handlers = null;
 	}
@@ -31,8 +33,8 @@ function Promise(fn) {
 				return;
 			}
 			fulfill(result);
-		} catch (e) {
-			reject(e);
+		} catch (ex) {
+			reject(ex);
 		}
 	}
 
@@ -89,6 +91,13 @@ function Promise(fn) {
 	doResolve(fn, resolve, reject);
 }
 
+/**
+ * Check if a value is a Promise and, if it is,
+ * return the `then` method of that promise.
+ *
+ * @param {Promise|Any} value
+ * @return {Function|Null}
+ */
 function getThen(value) {
 	var t = typeof value;
 	if (value && (t === 'object' || t === 'function')) {
@@ -100,6 +109,16 @@ function getThen(value) {
 	return null;
 }
 
+/**
+ * Take a potentially misbehaving resolver function and make sure
+ * onFulfilled and onRejected are only called once.
+ *
+ * Makes no guarantees about asynchrony.
+ *
+ * @param {Function} fn A resolver function that may not be trusted
+ * @param {Function} onFulfilled
+ * @param {Function} onRejected
+ */
 function doResolve(fn, onFulfilled, onRejected) {
 	var done = false;
 	try {
