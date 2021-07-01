@@ -6,6 +6,9 @@ function Template(tpl) {
         addLine = function(text) {
             code.push('r.push(\'' + text.replace(/\'/g, '\\\'').replace(/\n/g, '\\n').replace(/\r/g, '\\r') + '\');');
         };
+
+
+        // xxx
     while (match = re.exec(tpl)) {
         if (match.index > 0) {
             addLine(tpl.slice(0, match.index));
